@@ -121,4 +121,7 @@ This is a basic 2-page HTML website built using traditional web development tech
 - **Body text**: 1rem (16px)
 - **Navigation**: 1.1rem (17.6px)
 
+# Figma Link:
+[Link](https://www.figma.com/design/GEI97CE7jynNlww1H2uOvF/E-Commerce-UI-KIT--Community-?node-id=116-92&t=lUQGrGoAHmsXAKMi-1)
+
 This design demonstrates traditional web development techniques while maintaining a modern, professional appearance suitable for business websites.
