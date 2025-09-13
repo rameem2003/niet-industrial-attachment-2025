@@ -6,8 +6,6 @@
 
 ### Topics will cover
 
-- BEM Method
-- SASS
 - Git and Github
 - Figma to HTML
 
