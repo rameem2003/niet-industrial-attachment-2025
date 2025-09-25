@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <title>প্রোডাক্ট কার্ডস</title>
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            width: 250px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #f9f9f9;
+        }
+        .card h3 {
+            margin-top: 0;
+        }
+        .features {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h2>প্রোডাক্ট লিস্ট (কার্ডস)</h2>
+    
+    <h3>অবাঞ্ছিত কমা যোগ হওয়া উদাহরণ</h3>
+    <div id="cardsWithoutJoin" class="container"></div>
+    
+    <h3>join() দিয়ে সমাধান</h3>
+    <div id="cardsWithJoin" class="container"></div>
+
+    <script>
+        // প্রোডাক্ট ডেটা: অ্যারে অফ অবজেক্টস
+        const products = [
+            { name: "স্মার্টফোন", price: 15000, features: ["4GB RAM", "64GB স্টোরেজ", "HD ক্যামেরা"] },
+            { name: "ল্যাপটপ", price: 50000, features: ["i5 প্রসেসর", "8GB RAM", "512GB SSD"] },
+            { name: "হেডফোন", price: 2000, features: ["নয়েজ ক্যান্সেলিং", "ওয়্যারলেস", "লং ব্যাটারি"] }
+        ];
+
+        // অবাঞ্ছিত কমা যোগ হওয়া সেকশন
+        const containerWithout = document.getElementById("cardsWithoutJoin");
+        products.forEach(product => {
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.innerHTML = `
+                <h3>${product.name}</h3>
+                <p>দাম: ${product.price} টাকা</p>
+                <p class="features">ফিচারস: ${product.features}</p>  <!-- এখানে কমা যোগ হবে -->
+            `;
+            containerWithout.appendChild(card);
+        });
+        // আউটপুট: ফিচারসে "4GB RAM,64GB স্টোরেজ,HD ক্যামেরা" (কমা যোগ হয়েছে)
+
+        // join() দিয়ে সমাধান সেকশন
+        const containerWith = document.getElementById("cardsWithJoin");
+        products.forEach(product => {
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.innerHTML = `
+                <h3>${product.name}</h3>
+                <p>দাম: ${product.price} টাকা</p>
+                <p class="features">ফিচারস: ${product.features.join(", ")}</p>  <!-- কমা এবং স্পেস দিয়ে জয়েন -->
+            `;
+            containerWith.appendChild(card);
+        });
+        // আউটপুট: ফিচারসে "4GB RAM, 64GB স্টোরেজ, HD ক্যামেরা" (নিয়ন্ত্রিত ফরম্যাট)
+    </script>
+</body>
+</html>

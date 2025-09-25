@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <title>ডাইনামিক ডেটা প্রদর্শন</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>ব্যক্তির তালিকা</h2>
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>নাম</th>
+                <th>বয়স</th>
+                <th>শহর</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- এখানে ডাইনামিক ডেটা অ্যাড হবে -->
+        </tbody>
+    </table>
+
+    <script>
+        // ডাইনামিক ডেটা: অ্যারে অফ অবজেক্টস
+        const people = [
+            { name: "আলী", age: 25, city: "ঢাকা" },
+            { name: "রহিম", age: 30, city: "চট্টগ্রাম" },
+            { name: "করিম", age: 28, city: "সিলেট" },
+            { name: "সারা", age: 22, city: "রাজশাহী" }
+        ];
+
+        // টেবিল বডি এলিমেন্ট খুঁজে বের করা
+        const tableBody = document.getElementById("tableBody");
+
+        // অ্যারে লুপ করে প্রত্যেক অবজেক্টের জন্য রো তৈরি করা
+        people.map(person => {
+            // নতুন <tr> তৈরি
+            const row = document.createElement("tr");
+
+            // নামের জন্য <td>
+            const nameCell = document.createElement("td");
+            nameCell.textContent = person.name;
+            row.appendChild(nameCell);
+
+            // বয়সের জন্য <td>
+            const ageCell = document.createElement("td");
+            ageCell.textContent = person.age;
+            row.appendChild(ageCell);
+
+            // শহরের জন্য <td>
+            const cityCell = document.createElement("td");
+            cityCell.textContent = person.city;
+            row.appendChild(cityCell);
+
+            // রোটি টেবিল বডিতে অ্যাপেন্ড করা
+            tableBody.appendChild(row);
+        });
+    </script>
+</body>
+</html>
