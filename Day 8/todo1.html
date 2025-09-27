@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div>
+      <input type="text" name="" id="input" placeholder="Todo ......" />
+      <button id="btn">Add todo</button>
+    </div>
+
+    <div>
+      <ul id="list"></ul>
+    </div>
+
+    <script>
+      let todos = [];
+      const text = document.getElementById("input");
+      const btn = document.getElementById("btn");
+      const list = document.getElementById("list");
+
+      const renderTodo = () => {
+        console.log(todos);
+
+        list.innerHTML = "";
+
+        if (todos.length === 0) {
+          list.innerHTML = "no todo";
+          return;
+        }
+
+        todos.map((todo, index) => {
+          let li = document.createElement("li");
+
+          let span = document.createElement("span");
+          span.innerText = todo.data;
+          let deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "Delele";
+          deleteBtn.className = "text-red-500 font-bold";
+          deleteBtn.addEventListener("click", () => deleteTodo(index));
+
+          li.appendChild(span);
+          li.appendChild(deleteBtn);
+
+          list.append(li);
+        });
+      };
+
+      const deleteTodo = (index) => {
+        todos.splice(index, 1);
+        renderTodo();
+      };
+
+      const addTodo = () => {
+        if (text.value == "") {
+          alert("No");
+          return;
+        }
+        let data = text.value.trim();
+        todos.push({ data, done: false });
+        renderTodo();
+        text.value = "";
+      };
+
+      btn.addEventListener("click", addTodo);
+      text.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          addTodo();
+        }
+      });
+
+      renderTodo();
+    </script>
+  </body>
+</html>

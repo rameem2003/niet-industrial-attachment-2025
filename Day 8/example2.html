@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <title>কার্ড লিস্টে কমা সমস্যা</title>
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            width: 250px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #f9f9f9;
+        }
+        .card h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>প্রোডাক্ট কার্ডস</h2>
+    
+    <h3>অবাঞ্ছিত কমা যোগ হওয়া উদাহরণ</h3>
+    <div id="containerWithoutJoin" class="container"></div>
+    
+    <h3>join() দিয়ে সমাধান</h3>
+    <div id="containerWithJoin" class="container"></div>
+
+    <script>
+        // প্রোডাক্ট ডেটা
+        const products = [
+            { name: "স্মার্টফোন", price: 15000 },
+            { name: "ল্যাপটপ", price: 50000 },
+            { name: "হেডফোন", price: 2000 }
+        ];
+
+        // কার্ড HTML স্ট্রিং অ্যারে তৈরি
+        const cardArray = products.map(product => `
+            <div class="card">
+                <h3>${product.name}</h3>
+                <p>দাম: ${product.price} টাকা</p>
+            </div>
+        `);
+
+        // অবাঞ্ছিত কমা যোগ হওয়া সেকশন
+        const containerWithout = document.getElementById("containerWithoutJoin");
+        containerWithout.innerHTML = cardArray;
+        // আউটপুট: কার্ডগুলোর মধ্যে কমা (,) দেখা যাবে, যেমন: [কার্ড1],[কার্ড2],[কার্ড3]
+
+        // join() দিয়ে সমাধান সেকশন
+        const containerWith = document.getElementById("containerWithJoin");
+        containerWith.innerHTML = cardArray.join('');
+        // আউটপুট: কার্ডগুলো কমা ছাড়া একসাথে রেন্ডার হবে
+    </script>
+</body>
+</html>
