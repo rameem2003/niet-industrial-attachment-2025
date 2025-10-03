@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Node JS App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              clifford: "#da373d",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <header class="p-3 bg-green-700 text-center">
+      <h1 class="font-bold font-sans text-3xl text-white">
+        Welcome to Node JS
+      </h1>
+    </header>
+
+    <nav class="bg-green-700">
+      <ul class="flex items-center justify-center gap-5 p-2">
+        <li>
+          <a class="block font-semibold text-lg text-white" href="/">Home</a>
+        </li>
+        <li>
+          <a class="block font-semibold text-lg text-white" href="/about"
+            >About</a
+          >
+        </li>
+        <li>
+          <a class="block font-semibold text-lg text-white" href="/download"
+            >Download</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <main class="h-screen w-full flex items-center justify-center flex-col">
+      <h1 class="font-extrabold text-6xl text-center">
+       Download NODE JS
+      </h1>
+
+      <div class="flex items-center justify-center gap-2">
+
+
+     <a href='http://' class='inline-block p-3 rounded-lg bg-green-700 font-bold text-lg text-white mt-10'>Download for macOS (.dmg)</a>
+      </div>
+    </main>
+  </body>
+</html>
