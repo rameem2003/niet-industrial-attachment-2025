@@ -1,108 +1,71 @@
-const http = require("http");
 const fs = require("fs");
 const url = require("url");
-const path = require("path");
-const os = require("os");
-const { windows, mac } = require("./data");
-const statusMonitor = require("express-status-monitor");
+const http = require("http");
 
-let server = http.createServer((req, res) => {
-  // console.log(req);
-  // res.end();
+// write a file
+// console.log(fs);
 
-  // let p = path.resolve("relative/path/file.txt");
-  // console.log(path.dirname(p));
+// fs.writeFile("demo.txt", "Hello World", (err) => {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log("File written successfully");
+//   }
+// });
 
-  // let webpath = url.parse(req.url, true);
-  // console.log(webpath);
-  if (req.url == "/" && req.method == "GET") {
-    let stream = fs.createReadStream("demo.txt");
+// fs.appendFile("demo.txt", " Banglaedesh", (err) => {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log("File written successfully");
+//   }
+// });
 
-    stream.on("data", (chunk) => {
-      res.write(chunk);
-      // res.end();
-    });
+// fs.writeFile("index.html", "<h1>Hello World</h1>", (err) => {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log("File written successfully");
+//   }
+// });
 
-    stream.on("end", () => {
-      res.end();
-    });
-    return;
+// fs.unlink("demo.txt", (err) => {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log("File deleted successfully");
+//   }
+// });
 
-    // fs.readFile("demo.text", "utf-8", (err, data) => {
-    //   if (err) {
-    //     res.writeHead(404, { "content-type": "text/html" });
-    //     res.write("<h1>404</h1>");
-    //   } else {
-    //     res.writeHead(200, { "content-type": "text/plain" });
-    //     res.write(data);
-    //     res.end();
-    //   }
-    // });
-  } else if (req.url == "/about" && req.method == "GET") {
-    fs.readFile("./views/about.html", "utf-8", (err, data) => {
-      if (err) {
-        res.writeHead(404, { "content-type": "text/html" });
-        res.write("<h1>404</h1>");
-      } else {
-        res.writeHead(200, { "content-type": "text/html" });
-        res.write(data);
-        res.end();
-      }
-    });
-  } else if (req.url == "/download" && req.method == "GET") {
-    if (os.platform() == "win32") {
-      fs.writeFile("./views/download.html", windows, (err, data) => {
-        if (err) {
-          res.writeHead(404, { "content-type": "text/html" });
-          res.write("<h1>404</h1>");
-          res.end();
-        } else {
-          fs.readFile("./views/download.html", "utf-8", (err, data) => {
-            if (err) {
-              res.writeHead(404, { "content-type": "text/html" });
-              res.write("<h1>404</h1>");
-            } else {
-              res.writeHead(200, { "content-type": "text/html" });
-              res.write(data);
-              res.end();
-            }
-          });
-        }
-      });
-    } else if (req.url == "/data" && req.method == "POST") {
-      req.on("data", (chunk) => {
-        console.log(chunk.toString());
-      });
-      req.on("end", () => {
-        res.end("ok");
-      });
+// fs.readFile("index.html", "utf-8", (err, data) => {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log(data);
+//   }
+// });
+
+// let myurl = "http://localhost:8000/about?year=2024&month=february";
+
+// let formatedUrl = url.parse(myurl, true);
+
+// console.log(formatedUrl.query.month);
+
+let myServer = http.createServer((req, res) => {
+  //   console.log(req);
+  //   res.end("NIET Industrial Attachment 2025 - Node.js");
+
+  fs.readFile("index.html", "utf-8", (err, data) => {
+    if (err) {
+      console.log(err);
     } else {
-      fs.writeFile("./views/download.html", mac, (err, data) => {
-        if (err) {
-          res.writeHead(404, { "content-type": "text/html" });
-          res.write("<h1>404</h1>");
-          res.end();
-        } else {
-          fs.readFile("./views/download.html", "utf-8", (err, data) => {
-            if (err) {
-              res.writeHead(404, { "content-type": "text/html" });
-              res.write("<h1>404</h1>");
-            } else {
-              res.writeHead(200, { "content-type": "text/html" });
-              res.write(data);
-              res.end();
-            }
-          });
-        }
-      });
+      res.writeHead(201, "All OK", { "content-type": "text/html" });
+      res.write(data);
+      res.end();
     }
-  } else {
-    res.writeHead(404, { "content-type": "text/html" });
-    res.write("<h1>404</h1>");
-    res.end();
-  }
+  });
 });
 
-server.listen(5000, () => {
-  console.log("Server is running");
+myServer.listen(5000, () => {
+  console.log("Server is running on port http://localhost:5000");
 });
