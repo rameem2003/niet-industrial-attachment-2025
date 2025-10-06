@@ -1,6 +1,9 @@
 const fs = require("fs");
 const url = require("url");
 const http = require("http");
+const os = require("os");
+
+console.log(os.totalmem() / (1024 * 1024 * 1024)); // in GB
 
 // write a file
 // console.log(fs);
@@ -55,15 +58,37 @@ let myServer = http.createServer((req, res) => {
   //   console.log(req);
   //   res.end("NIET Industrial Attachment 2025 - Node.js");
 
-  fs.readFile("index.html", "utf-8", (err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.writeHead(201, "All OK", { "content-type": "text/html" });
-      res.write(data);
-      res.end();
-    }
-  });
+  // fs.readFile("index.html", "utf-8", (err, data) => {
+  //   if (err) {
+  //     console.log(err);
+  //   } else {
+  //     res.writeHead(201, "All OK", { "content-type": "text/html" });
+  //     res.write(data);
+  //     res.end();
+  //   }
+  // });
+
+  if (req.url == "/" && req.method == "GET") {
+    res.writeHead(201, "All OK", { "content-type": "text/html" });
+    res.write("<h1>Hello World</h1>");
+    res.end();
+  }
+
+  if (req.url == "/" && req.method == "POST") {
+    res.write("<h1>Data received</h1>");
+    res.end();
+    return;
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+    req.on("end", () => {
+      console.log(body);
+      res.end("Data received");
+    });
+
+    res.writeHead(201, "All OK", { "content-type": "text/html" });
+  }
 });
 
 myServer.listen(5000, () => {
