@@ -75,19 +75,19 @@ let myServer = http.createServer((req, res) => {
   }
 
   if (req.url == "/" && req.method == "POST") {
-    res.write("<h1>Data received</h1>");
-    res.end();
-    return;
     let body = "";
     req.on("data", (chunk) => {
       body += chunk.toString();
     });
     req.on("end", () => {
-      console.log(body);
+      console.log(JSON.parse(body));
       res.end("Data received");
     });
 
     res.writeHead(201, "All OK", { "content-type": "text/html" });
+    res.write("<h1>Data received</h1>");
+    res.end();
+    return;
   }
 });
 
