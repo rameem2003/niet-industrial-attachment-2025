@@ -69,6 +69,9 @@ let myServer = http.createServer((req, res) => {
   // });
 
   if (req.url == "/" && req.method == "GET") {
+    console.log(req.headers.authorization);
+    console.log(req.headers.cookie.split("="));
+
     res.writeHead(201, "All OK", { "content-type": "text/html" });
     res.write("<h1>Hello World</h1>");
     res.end();
