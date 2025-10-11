@@ -241,7 +241,7 @@ const path = require("path");
 const app = express();
 
 // Ensure uploads directory exists (create it manually or via fs.mkdir)
-const uploadDir = path.join(__dirname, "uploads");
+const uploadDir = path.join(__dirname, "./upload");
 
 // Configure storage: Save to disk with unique filename
 const storage = multer.diskStorage({
