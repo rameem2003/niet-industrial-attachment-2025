@@ -73,14 +73,24 @@ app.post("/users/add", (req, res) => {
 });
 
 // user delete route
-app.delete("/users/:name", (req, res) => {
-  let { name } = req.params;
+app.delete("/users/:id", (req, res) => {
+  let { id } = req.params;
 
-  //   let index = array.inde
+  // you can use findIndex and splice
+  let index = array.findIndex((item) => item.id == id);
+  if (index == -1) {
+    res.status(404).send({
+      success: false,
+      message: "User not found",
+    });
+    return;
+  }
+  array.splice(index, 1);
+
+  // also you can use filter
   let newArray = array.filter((item) => item.name.toLowerCase() != name);
   array = [];
   array = newArray;
-  //   array.splice(0,1, )
 
   res.send({
     success: true,
