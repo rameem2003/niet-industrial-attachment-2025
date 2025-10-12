@@ -1,10 +1,6 @@
 const array = require("../model/user.model");
 
 const user = (req, res) => {
-  //   console.log(req.headers.authorization);
-  let token = req.headers.authorization.split(" ");
-  console.log(token);
-
   let { name } = req.query;
   console.log(name);
 
@@ -35,9 +31,9 @@ const user = (req, res) => {
 };
 
 const addUser = (req, res) => {
-  let { name, age, status } = req.body;
+  let { id, name, age, status } = req.body;
 
-  array.push({ name, age, status });
+  array.push({ id, name, age, status });
 
   res.send({
     success: true,
@@ -59,15 +55,20 @@ const userDelete = (req, res) => {
   }
   array.splice(index, 1);
 
-  // also you can use filter
-  let newArray = array.filter((item) => item.name.toLowerCase() != name);
-  array = [];
-  array = newArray;
-
   res.send({
     success: true,
     message: "User deleted success",
   });
+
+  // also you can use filter
+  // let newArray = array.filter((item) => item.name.toLowerCase() != name);
+  // array = [];
+  // array = newArray;
+
+  // res.send({
+  //   success: true,
+  //   message: "User deleted success",
+  // });
 };
 
 module.exports = { user, addUser, userDelete };
