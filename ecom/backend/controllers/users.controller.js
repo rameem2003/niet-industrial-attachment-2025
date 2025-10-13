@@ -1,44 +1,42 @@
-const array = require("../model/user.model");
+const userModel = require("../model/user.model");
 
-const user = (req, res) => {
-  let { name } = req.query;
-  console.log(name);
-
-  if (name) {
-    let user = array.filter(
-      (item) => item.name.toLowerCase() == name.toLowerCase()
-    );
-    if (user.length == 0) {
-      res.status(404).send({
-        success: false,
-        message: "User no found",
-      });
-    }
+const user = async (req, res) => {
+  try {
+    let allUser = await userModel.find();
     res.status(200).send({
       success: true,
-      message: "User found",
-      data: user,
+      data: allUser,
     });
-
-    return;
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
   }
-
-  res.status(200).send({
-    success: true,
-    message: "All Users found",
-    data: array,
-  });
 };
 
-const addUser = (req, res) => {
-  let { id, name, age, status } = req.body;
+const addUser = async (req, res) => {
+  let { name, phone, address } = req.body;
 
-  array.push({ id, name, age, status });
+  try {
+    let newUser = new userModel({
+      name,
+      phone,
+      address,
+    });
 
-  res.send({
-    success: true,
-    message: "New User Created",
-  });
+    await newUser.save();
+
+    res.send({
+      success: true,
+      message: "New User Created",
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 const userDelete = (req, res) => {

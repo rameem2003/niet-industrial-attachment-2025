@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const router = require("./router");
+const connectDB = require("./config/db.config");
+connectDB();
 
 let port = process.env.PORT;
 
