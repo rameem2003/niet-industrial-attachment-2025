@@ -1,17 +1,30 @@
-const array = require("../model/user.model");
+const userModel = require("../model/user.model");
 
-const user = (req, res) => {
-  let { name } = req.query;
-  console.log(name);
+const user = async (req, res) => {
+  try {
+    let allUsers = await userModel.find();
+    res.status(200).send({
+      success: true,
+      message: "Users found",
+      data: allUsers,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
-  if (name) {
-    let user = array.filter(
-      (item) => item.name.toLowerCase() == name.toLowerCase()
-    );
-    if (user.length == 0) {
-      res.status(404).send({
+const singleUser = async (req, res) => {
+  let { id } = req.params;
+  try {
+    let user = await userModel.findOne({ _id: id });
+    if (!user) {
+      return res.status(404).send({
         success: false,
-        message: "User no found",
+        message: "User not found",
       });
     }
     res.status(200).send({
@@ -19,56 +32,86 @@ const user = (req, res) => {
       message: "User found",
       data: user,
     });
-
-    return;
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
   }
-
-  res.status(200).send({
-    success: true,
-    message: "All Users found",
-    data: array,
-  });
 };
 
-const addUser = (req, res) => {
-  let { id, name, age, status } = req.body;
+const addUser = async (req, res) => {
+  let { name, email, password, phone, address } = req.body;
 
-  array.push({ id, name, age, status });
+  try {
+    console.log(req.body);
 
-  res.send({
-    success: true,
-    message: "New User Created",
-  });
+    let newUser = new userModel({ name, email, password, phone, address });
+    await newUser.save();
+    console.log("dwe");
+
+    res.send({
+      success: true,
+      message: "New User Created",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
-const userDelete = (req, res) => {
+const updateUser = async (req, res) => {
+  let { id } = req.params;
+  let { name, email, password, phone, address } = req.body;
+
+  try {
+    let updatedUser = await userModel.findOneAndUpdate(
+      { _id: id },
+      { name, email, password, phone, address },
+      { new: true }
+    );
+
+    res.status(200).send({
+      success: true,
+      message: "User updated",
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const userDelete = async (req, res) => {
   let { id } = req.params;
 
-  // you can use findIndex and splice
-  let index = array.findIndex((item) => item.id == id);
-  if (index == -1) {
-    res.status(404).send({
-      success: false,
-      message: "User not found",
+  try {
+    let data = await userModel.findByIdAndDelete({ _id: id });
+    if (!data) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+    res.status(200).send({
+      success: true,
+      message: "User deleted",
+      data: data,
     });
-    return;
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
   }
-  array.splice(index, 1);
-
-  res.send({
-    success: true,
-    message: "User deleted success",
-  });
-
-  // also you can use filter
-  // let newArray = array.filter((item) => item.name.toLowerCase() != name);
-  // array = [];
-  // array = newArray;
-
-  // res.send({
-  //   success: true,
-  //   message: "User deleted success",
-  // });
 };
 
-module.exports = { user, addUser, userDelete };
+module.exports = { user, addUser, singleUser, userDelete, updateUser };

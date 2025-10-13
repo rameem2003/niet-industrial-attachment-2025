@@ -1,13 +1,34 @@
-let array = [
-  { id: 1, name: "Charlie", age: 25, status: "active" },
-  { id: 2, name: "Bob", age: 30, status: "inactive" },
-  { id: 3, name: "Diana", age: 28, status: "active" },
-  { id: 4, name: "Ethan", age: 35, status: "inactive" },
-  { id: 5, name: "Fiona", age: 27, status: "active" },
-  { id: 6, name: "George", age: 32, status: "inactive" },
-  { id: 7, name: "Hannah", age: 24, status: "active" },
-  { id: 8, name: "Ian", age: 29, status: "inactive" },
-  { id: 9, name: "Julia", age: 26, status: "active" },
-];
+const mongoose = require("mongoose");
 
-module.exports = array;
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      minLength: [4, "Name must be at least 4 characters"],
+      maxLength: [20, "Name must be at most 20 characters"],
+      required: true,
+    },
+    email: {
+      type: String,
+      unique: [true, "Email already exists"],
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String, // dhaka, khulna, rangpur
+      enum: ["dhaka", "khulna", "rangpur"],
+      required: true,
+    },
+    phone: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("user", userSchema);
