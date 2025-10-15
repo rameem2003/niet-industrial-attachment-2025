@@ -1,15 +1,22 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const router = require("./router");
 const connectDb = require("./config/db.config");
 connectDb();
 
 let port = process.env.PORT;
 
+app.use(
+  cors({
+    origin: "http://127.0.0.1:5502",
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("upload"));
+
 app.use(router);
 
 // home route
