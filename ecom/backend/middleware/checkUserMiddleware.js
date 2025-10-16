@@ -1,5 +1,8 @@
 const checkUserMiddleware = (req, res, next) => {
-  if (!req.headers.authorization) {
+  console.log(req.cookies.token);
+  let token = req.cookies.token;
+
+  if (!token) {
     return res.status(401).send({
       success: false,
       message: "Unauthorized User",

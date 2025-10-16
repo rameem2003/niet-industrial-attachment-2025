@@ -4,10 +4,18 @@ const {
   userDelete,
   singleUser,
   updateUser,
+  registerUser,
+  loginUser,
 } = require("../../controllers/users.controller");
 const checkUserMiddleware = require("../../middleware/checkUserMiddleware");
 
 const router = require("express").Router();
+
+// register user
+router.post("/register", registerUser);
+
+// login user
+router.post("/login", loginUser);
 
 // All users route
 // http://localhost:5000/api/auth/users

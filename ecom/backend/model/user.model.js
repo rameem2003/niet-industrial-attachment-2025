@@ -18,12 +18,19 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     address: {
-      type: String, // dhaka, khulna, rangpur
-      enum: ["dhaka", "khulna", "rangpur"],
-      required: true,
+      type: String,
     },
     phone: {
       type: String,
+      default: "",
+    },
+    isVerify: {
+      type: Boolean,
+      default: false,
+    },
+    image: {
+      type: String,
+      default: null,
     },
   },
   {
