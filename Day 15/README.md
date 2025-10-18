@@ -1,10 +1,9 @@
-# Ecommerce Project Documentation Day 14
+# Ecommerce Project Documentation Day 15 (Followup class 14)
 
 ## Industrial Attachment - NIET
 
 ## Overview
 
-- Send verification email by nodemailer
 - Verify email
 - Resend email verification
 

@@ -1,6 +1,9 @@
 const userModel = require("../model/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const generateToken = require("../utils/token");
+const verifyEmailModel = require("../model/verifyEmail.model");
+const mail = require("../utils/email");
 
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -17,6 +20,72 @@ const registerUser = async (req, res) => {
         let newUser = new userModel({ name, email, password: hash });
 
         await newUser.save();
+
+        let token = generateToken();
+
+        let sendToken = new verifyEmailModel({ userID: newUser._id, token });
+        await sendToken.save();
+
+        let body = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Verify Your Email</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .code {
+      font-size: 24px;
+      font-weight: bold;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-radius: 4px;
+      text-align: center;
+      letter-spacing: 2px;
+      margin: 20px 0;
+    }
+    .footer {
+      font-size: 12px;
+      color: #777;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Verify Your Email Address</h2>
+    <p>Hi ${newUser.name},</p>
+    <p>Thank you for signing up!</p>
+    <p>Please use the verification code below to verify your email address:</p>
+    
+    <div class="code">${token}</div>
+
+    <p>This code will expire in 10 minutes.</p>
+    <p>If you did not request this, you can safely ignore this email.</p>
+
+    <p>Thanks,<br>The NIET Team</p>
+
+    <div class="footer">
+      &copy; 2025 NIET. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+        await mail(newUser.email, "Verify your email", body);
 
         res.status(201).send({
           success: true,
