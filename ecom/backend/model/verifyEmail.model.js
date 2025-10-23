@@ -12,7 +12,7 @@ const verifyEmailSchema = new mongoose.Schema(
     expiresAt: {
       type: Date,
       default: Date.now,
-      expires: 60, // 1 minute (in seconds)
+      expires: 3600, // 5 minute (in seconds)
     },
   },
   {

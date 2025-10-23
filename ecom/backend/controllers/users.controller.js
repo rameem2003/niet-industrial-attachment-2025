@@ -26,6 +26,8 @@ const registerUser = async (req, res) => {
         let sendToken = new verifyEmailModel({ userID: newUser._id, token });
         await sendToken.save();
 
+        let verificationlink = `http://localhost:5000/api/auth/verify?email=${email}&token=${token}`;
+
         let body = `<!DOCTYPE html>
 <html>
 <head>
@@ -70,7 +72,7 @@ const registerUser = async (req, res) => {
     <p>Thank you for signing up!</p>
     <p>Please use the verification code below to verify your email address:</p>
     
-    <div class="code">${token}</div>
+    <div class="code">${verificationlink}</div>
 
     <p>This code will expire in 10 minutes.</p>
     <p>If you did not request this, you can safely ignore this email.</p>
@@ -132,11 +134,11 @@ const loginUser = async (req, res) => {
           };
 
           let token = jwt.sign(userData, process.env.JWT_KEY, {
-            expiresIn: "1m",
+            expiresIn: "10m",
           });
 
           res.cookie("token", token, {
-            maxAge: 60000, // 1 min
+            maxAge: 60000 * 10, // 10 min
           });
 
           res.status(200).send({
@@ -155,6 +157,197 @@ const loginUser = async (req, res) => {
       res.status(404).send({
         success: false,
         message: "Invalid Credential",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const verifyUser = async (req, res) => {
+  const { email, token } = req.query;
+  console.log(email, token);
+
+  try {
+    let tokenExist = await verifyEmailModel
+      .findOne({ token })
+      .populate("userID");
+
+    if (!tokenExist) {
+      return res.status(404).send({
+        success: false,
+        message: "Token Not Found",
+      });
+    }
+    console.log(tokenExist);
+
+    let user = await userModel.findOneAndUpdate(
+      { _id: tokenExist.userID._id },
+      { isVerify: true },
+      { new: true }
+    );
+
+    await verifyEmailModel.deleteOne({ _id: tokenExist._id });
+
+    res.status(200).send("<h1>Email Verification Complete</h1>");
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const resendVerificationEmail = async (req, res) => {
+  let { email } = req.body;
+
+  try {
+    let userExist = await userModel.findOne({ email });
+
+    if (!userExist) {
+      return res.status(404).send({
+        success: false,
+        message: "Email Not Found",
+      });
+    }
+
+    let token = generateToken();
+
+    await verifyEmailModel.deleteMany({ userID: userExist._id });
+
+    let sendToken = new verifyEmailModel({ userID: userExist._id, token });
+    await sendToken.save();
+
+    let verificationlink = `http://localhost:5000/api/auth/verify?email=${email}&token=${token}`;
+
+    let body = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Verify Your Email</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .code {
+      font-size: 24px;
+      font-weight: bold;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-radius: 4px;
+      text-align: center;
+      letter-spacing: 2px;
+      margin: 20px 0;
+    }
+    .footer {
+      font-size: 12px;
+      color: #777;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Verify Your Email Address</h2>
+    <p>Hi ${userExist.name},</p>
+    <p>Thank you for signing up!</p>
+    <p>Please use the verification code below to verify your email address:</p>
+    
+    <div class="code">${verificationlink}</div>
+
+    <p>This code will expire in 10 minutes.</p>
+    <p>If you did not request this, you can safely ignore this email.</p>
+
+    <p>Thanks,<br>The NIET Team</p>
+
+    <div class="footer">
+      &copy; 2025 NIET. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+    await mail(userExist.email, "Verify your email", body);
+
+    res.status(200).send({
+      success: true,
+      message: "Verification Email Sent",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const updateUserPassword = async (req, res) => {
+  console.log(req.user);
+
+  const { oldPassword, newPassword, confirmNewPassword } = req.body;
+
+  try {
+    let existUser = await userModel.findOne({ _id: req.user.id });
+
+    if (!existUser) {
+      return res.status(401).send({
+        success: false,
+        message: "Unauthorized User",
+      });
+    } else {
+      bcrypt.compare(oldPassword, existUser.password, (err, data) => {
+        if (err) {
+          return res.status(401).send({
+            success: false,
+            message: "Unauthorized User",
+          });
+        } else {
+          if (newPassword == confirmNewPassword) {
+            bcrypt.hash(newPassword, 10, async function (err, hash) {
+              if (err) {
+                return res.status(500).send({
+                  success: false,
+                  message: "Internal Server Error",
+                });
+              } else {
+                let newPass = await userModel.findOneAndUpdate(
+                  { _id: existUser._id },
+                  { password: hash },
+                  { new: true }
+                );
+
+                res.status(200).send({
+                  success: true,
+                  message: "Password UPdate success",
+                  data: newPass,
+                });
+              }
+            });
+          } else {
+            return res.status(401).send({
+              success: false,
+              message: "New Password didnot match",
+            });
+          }
+        }
       });
     }
   } catch (error) {
@@ -283,6 +476,9 @@ const userDelete = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  verifyUser,
+  resendVerificationEmail,
+  updateUserPassword,
   user,
   addUser,
   singleUser,

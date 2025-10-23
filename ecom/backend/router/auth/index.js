@@ -6,6 +6,9 @@ const {
   updateUser,
   registerUser,
   loginUser,
+  verifyUser,
+  resendVerificationEmail,
+  updateUserPassword,
 } = require("../../controllers/users.controller");
 const checkUserMiddleware = require("../../middleware/checkUserMiddleware");
 
@@ -17,6 +20,14 @@ router.post("/register", registerUser);
 // login user
 router.post("/login", loginUser);
 
+// verify user
+router.get("/verify", verifyUser);
+
+// resend email
+router.post("/resend", resendVerificationEmail);
+
+// update user password
+router.post("/update-password", checkUserMiddleware, updateUserPassword);
 // All users route
 // http://localhost:5000/api/auth/users
 router.get("/users", checkUserMiddleware, user);

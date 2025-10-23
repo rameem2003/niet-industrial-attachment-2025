@@ -6,6 +6,7 @@
 
 - Verify email
 - Resend email verification
+- Update User Password (Check ECOM Folder Code)
 
 ### Implementing Email Verification in MERN Stack Authentication
 
