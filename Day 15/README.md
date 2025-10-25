@@ -1,4 +1,4 @@
-# Ecommerce Project Documentation Day 15 (Followup class 14)
+# Ecommerce Project Documentation Day 15 (Followup class 15)
 
 ## Industrial Attachment - NIET
 
