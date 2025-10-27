@@ -359,6 +359,68 @@ const updateUserPassword = async (req, res) => {
   }
 };
 
+const editUserProfile = async (req, res) => {
+  if (!req.user) {
+    return res
+      .status(404)
+      .send({ success: false, message: "Unathorised User" });
+  }
+
+  let profilePicture = req?.file?.filename;
+  let updateFields = {};
+  let allowedFields = ["name", "phone", "address"];
+
+  allowedFields.map((field) => {
+    if (req.body[field] !== undefined) {
+      updateFields[field] = req.body[field]; // updateFields.name = data
+    }
+  });
+
+  if (profilePicture) {
+    try {
+      let updateProfile = await userModel.findOneAndUpdate(
+        { _id: req.user.id },
+        { updateFields, image: `http://localhost:5000/${profilePicture}` },
+        {
+          new: true,
+        }
+      );
+      return res.status(200).send({
+        success: true,
+        message: "Profile Update Success",
+        data: updateProfile,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).send({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  try {
+    let updateProfile = await userModel.findOneAndUpdate(
+      { _id: req.user.id },
+      updateFields,
+      {
+        new: true,
+      }
+    );
+    return res.status(200).send({
+      success: true,
+      message: "Profile Update Success",
+      data: updateProfile,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const user = async (req, res) => {
   try {
     let allUsers = await userModel.find();
@@ -479,6 +541,7 @@ module.exports = {
   verifyUser,
   resendVerificationEmail,
   updateUserPassword,
+  editUserProfile,
   user,
   addUser,
   singleUser,

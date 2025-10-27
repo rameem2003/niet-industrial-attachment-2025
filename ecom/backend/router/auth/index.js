@@ -9,8 +9,11 @@ const {
   verifyUser,
   resendVerificationEmail,
   updateUserPassword,
+  editUserProfile,
 } = require("../../controllers/users.controller");
 const checkUserMiddleware = require("../../middleware/checkUserMiddleware");
+const createUploadMiddleware = require("../../middleware/fileupload");
+const upload = createUploadMiddleware({ type: "profile" });
 
 const router = require("express").Router();
 
@@ -28,6 +31,15 @@ router.post("/resend", resendVerificationEmail);
 
 // update user password
 router.post("/update-password", checkUserMiddleware, updateUserPassword);
+
+// update user profile
+router.patch(
+  "/profile-update",
+  checkUserMiddleware,
+  upload.single("image"),
+  editUserProfile
+);
+
 // All users route
 // http://localhost:5000/api/auth/users
 router.get("/users", checkUserMiddleware, user);
