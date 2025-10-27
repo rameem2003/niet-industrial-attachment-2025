@@ -18,6 +18,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("uploads/profile"));
+app.use(express.static("uploads/category"));
 
 app.use(router);
 
