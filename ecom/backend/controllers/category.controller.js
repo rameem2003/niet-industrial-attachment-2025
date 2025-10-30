@@ -5,7 +5,7 @@ const path = require("path");
 // all category
 const getAllCategory = async (req, res) => {
   try {
-    let allCategory = await categoryModel.find();
+    let allCategory = await categoryModel.find().populate("products");
 
     return res.status(200).send({
       success: true,
