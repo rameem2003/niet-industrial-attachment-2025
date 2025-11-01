@@ -9,5 +9,6 @@
 - Increment Cart Item
 - Decrement Cart Item
 - Remove Cart Item
+- Update Product Information
 
 ---
