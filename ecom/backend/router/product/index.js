@@ -3,6 +3,7 @@ const {
   getAllProducts,
   getSingleProduct,
   deleteProduct,
+  updateProduct,
 } = require("../../controllers/product.controller");
 const checkUserMiddleware = require("../../middleware/checkUserMiddleware");
 const createUploadMiddleware = require("../../middleware/fileupload");
@@ -18,6 +19,13 @@ router.post(
   checkUserMiddleware,
   upload.array("images"),
   createNewProduct
+);
+
+router.patch(
+  "/update/:id",
+  checkUserMiddleware,
+  upload.array("images"),
+  updateProduct
 );
 
 router.delete("/delete/:id", checkUserMiddleware, deleteProduct);

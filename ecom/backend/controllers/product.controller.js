@@ -99,6 +99,80 @@ const createNewProduct = async (req, res) => {
   }
 };
 
+// update product
+const updateProduct = async (req, res) => {
+  if (!req.user) {
+    return res
+      .status(404)
+      .send({ success: false, message: "Unathorised User" });
+  }
+
+  let { id } = req.params;
+
+  let updateFields = {};
+  let allowedFields = ["name", "description", "sellingPrice", "discountPrice"];
+  // let thumb = req?.file?.filename;
+
+  allowedFields.map((field) => {
+    if (req.body[field] !== undefined) {
+      updateFields[field] = req.body[field]; // updateFields.name = data
+    }
+  });
+
+  let images = req.files.map((image) => {
+    return `http://localhost:5000/${image.filename}`;
+  });
+
+  try {
+    if (images.length == 0) {
+      let targetProduct = await productModel.findOneAndUpdate(
+        { _id: id },
+        { $set: updateFields }
+      );
+
+      return res.status(200).send({
+        success: true,
+        message: "Product Updated Successfully",
+        data: targetProduct,
+      });
+    } else {
+      let targetProduct = await productModel.findOneAndUpdate(
+        {
+          _id: id,
+        },
+        { $set: { ...updateFields, images } }
+      );
+
+      targetProduct.images.map((image) => {
+        let split = image.split("/");
+        let actualFileName = split[split.length - 1];
+        fs.unlink(
+          `${path.join(__dirname, "../uploads/product/", actualFileName)}`,
+          (err) => {
+            if (err) {
+              console.log(err);
+            }
+
+            console.log("File delete");
+          }
+        );
+      });
+
+      return res.status(200).send({
+        success: true,
+        message: "Product Updated Successfully",
+        data: targetProduct,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // delete product
 const deleteProduct = async (req, res) => {
   if (!req.user) {
@@ -153,5 +227,6 @@ module.exports = {
   getAllProducts,
   getSingleProduct,
   createNewProduct,
+  updateProduct,
   deleteProduct,
 };
