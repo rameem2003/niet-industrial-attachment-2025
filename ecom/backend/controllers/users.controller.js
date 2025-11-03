@@ -421,27 +421,21 @@ const editUserProfile = async (req, res) => {
   }
 };
 
-const user = async (req, res) => {
-  try {
-    let allUsers = await userModel.find();
-    res.status(200).send({
-      success: true,
-      message: "Users found",
-      data: allUsers,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({
-      success: false,
-      message: error.message,
-    });
+const userProfile = async (req, res) => {
+  if (!req.user) {
+    return res
+      .status(404)
+      .send({ success: false, message: "Unathorised User" });
   }
-};
-
-const singleUser = async (req, res) => {
-  let { id } = req.params;
   try {
-    let user = await userModel.findOne({ _id: id });
+    let user = await userModel.findOne({ _id: req.user.id }).populate({
+      path: "orderList", // 1st path orderList ->
+      populate: {
+        path: "items.item", // 2nd path items -> item
+        model: "product", // check the model to expose the item information
+      },
+    });
+
     if (!user) {
       return res.status(404).send({
         success: false,
@@ -452,29 +446,6 @@ const singleUser = async (req, res) => {
       success: true,
       message: "User found",
       data: user,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-const addUser = async (req, res) => {
-  let { name, email, password, phone, address } = req.body;
-
-  try {
-    console.log(req.body);
-
-    let newUser = new userModel({ name, email, password, phone, address });
-    await newUser.save();
-    console.log("dwe");
-
-    res.send({
-      success: true,
-      message: "New User Created",
     });
   } catch (error) {
     console.log(error);
@@ -535,6 +506,15 @@ const userDelete = async (req, res) => {
   }
 };
 
+const logoutUser = async (req, res) => {
+  res.clearCookie("token");
+
+  res.status(200).send({
+    success: true,
+    message: "User Logged out",
+  });
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -542,9 +522,8 @@ module.exports = {
   resendVerificationEmail,
   updateUserPassword,
   editUserProfile,
-  user,
-  addUser,
-  singleUser,
+  userProfile,
   userDelete,
   updateUser,
+  logoutUser,
 };

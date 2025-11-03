@@ -1,8 +1,29 @@
 const cartModel = require("../model/cart.model");
 const orderModel = require("../model/order.model");
+const userModel = require("../model/user.model");
 const sslcz = require("../utils/paymentgateway");
 const generateToken = require("../utils/token");
 
+// all orders
+const allOrders = async (req, res) => {
+  if (!req.user) {
+    return res
+      .status(404)
+      .send({ success: false, message: "Unathorised User" });
+  }
+  try {
+    let orders = await orderModel.find().populate("items.item");
+    res.send(orders);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// create new order
 const createNewOrder = async (req, res) => {
   if (!req.user) {
     return res
@@ -22,14 +43,11 @@ const createNewOrder = async (req, res) => {
     const quantity = cartItem?.quantity || 0;
     return total + price * quantity;
   }, 0);
-  console.log(grandTotal);
 
-  let orderItems = cartData.map((cartItem) => {
-    return {
-      item: cartItem.item,
-      quantity: cartItem.quantity,
-    };
-  });
+  let orderItems = cartData.map((cartItem) => ({
+    item: cartItem.item,
+    quantity: cartItem.quantity,
+  }));
 
   let token = generateToken();
 
@@ -44,6 +62,12 @@ const createNewOrder = async (req, res) => {
   });
 
   await newOrder.save();
+
+  await userModel.findOneAndUpdate(
+    { _id: req.user.id },
+    { $push: { orderList: newOrder._id } },
+    { new: true }
+  );
   const data = {
     total_amount: grandTotal,
     currency: "BDT",
@@ -76,8 +100,6 @@ const createNewOrder = async (req, res) => {
   };
 
   sslcz.init(data).then((apiResponse) => {
-    console.log(apiResponse);
-
     // Redirect the user to payment gateway
     let GatewayPageURL = apiResponse.GatewayPageURL;
     // res.redirect(GatewayPageURL);
@@ -87,6 +109,7 @@ const createNewOrder = async (req, res) => {
   });
 };
 
+// order success
 const successOrder = async (req, res) => {
   let { id } = req.query;
 
@@ -98,4 +121,4 @@ const successOrder = async (req, res) => {
   res.status(200).send("<h1>Order is confirmed</h1>");
 };
 
-module.exports = { createNewOrder, successOrder };
+module.exports = { createNewOrder, successOrder, allOrders };
