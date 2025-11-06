@@ -26,8 +26,10 @@ const registerUser = async (req, res) => {
         let sendToken = new verifyEmailModel({ userID: newUser._id, token });
         await sendToken.save();
 
-        let verificationlink = `http://localhost:5000/api/auth/verify?email=${email}&token=${token}`;
+        let verificationlink = `${req.protocol}://${req.host}/api/auth/verify?email=${email}&token=${token}`;
 
+        // https://api-niet.com/
+        // protocol://(domain / host)
         let body = `<!DOCTYPE html>
 <html>
 <head>

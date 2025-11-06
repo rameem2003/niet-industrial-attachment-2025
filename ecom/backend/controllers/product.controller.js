@@ -60,7 +60,7 @@ const createNewProduct = async (req, res) => {
   let { name, description, sellingPrice, discountPrice, category } = req.body;
 
   let images = req.files.map((image) => {
-    return `http://localhost:5000/${image.filename}`;
+    return `${req.protocol}://${req.host}/${image.filename}`;
   });
 
   try {
@@ -120,7 +120,7 @@ const updateProduct = async (req, res) => {
   });
 
   let images = req.files.map((image) => {
-    return `http://localhost:5000/${image.filename}`;
+    return `${req.protocol}://${req.host}/${image.filename}`;
   });
 
   try {

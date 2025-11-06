@@ -25,9 +25,12 @@ app.use(router);
 
 // home route
 app.get("/", (req, res) => {
+  console.log(req.host, req.protocol);
+
   res.send({
     success: true,
     message: "Welcome to server",
+    // data: JSON.stringify(req),
   });
 });
 

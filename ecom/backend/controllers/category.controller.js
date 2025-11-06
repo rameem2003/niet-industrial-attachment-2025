@@ -63,7 +63,7 @@ const createNewCategory = async (req, res) => {
       name,
       description,
       userId: req.user.id,
-      thumb: `http://localhost:5000/${thumb}`,
+      thumb: `${req.protocol}://${req.host}/${thumb}`,
     });
 
     await newcategory.save();
@@ -133,7 +133,12 @@ const updateCategory = async (req, res) => {
     // if thumb is there
     let targetCategory = await categoryModel.findOneAndUpdate(
       { _id: id },
-      { $set: { ...updateFields, thumb: `http://localhost:5000/${thumb}` } }
+      {
+        $set: {
+          ...updateFields,
+          thumb: `${req.protocol}://${req.host}/${thumb}`,
+        },
+      }
     );
 
     let split = targetCategory.thumb.split("/");
