@@ -1,4 +1,8 @@
-# React Hooks & Patterns: Day 2 Documentation
+# Ecommerce Project Documentation Day 22
+
+## Industrial Attachment - NIET
+
+## React Hooks & Patterns
 
 ## Overview
 
