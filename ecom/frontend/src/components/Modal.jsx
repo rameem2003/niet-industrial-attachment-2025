@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
+import { userContext } from "../context/UserContextProvider";
 
-const Modal = ({onClick}) => {
+const Modal = ({ onClick }) => {
+  const user = useContext(userContext);
+  useEffect(() => {
+    console.log("Component Mounted");
+
+    return () => {
+      console.log("Unmounting");
+    };
+  }, []);
   return (
     <div
       style={{
@@ -10,7 +19,7 @@ const Modal = ({onClick}) => {
         width: "500px",
       }}
     >
-      <h1>Modal Title</h1>
+      <h1>Modal Title {user.name}</h1>
       <p>
         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero
         necessitatibus nobis repellat ea molestiae natus voluptatum excepturi
