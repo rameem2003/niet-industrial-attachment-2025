@@ -51,7 +51,7 @@ const App = () => {
       >
         Click
       </button>
-      <h1>Count {count}</h1>
+      <h1 className="text-3xl text-red-500 font-bold">Count {count}</h1>
       <button onClick={() => setCount((prev) => prev + 1)}>+</button>
       <button onClick={() => setCount((prev) => prev - 1)}>-</button>
       {isModalOpen && <Modal onClick={handleModal} />}
