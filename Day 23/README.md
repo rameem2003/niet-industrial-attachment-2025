@@ -6,8 +6,9 @@
 
 ## Overview
 
-- useMemo
+- useMemo & React.memo
 - useCallback
+- React Router DOM
 
 ### Easy Examples of `useMemo` and `useCallback`
 
