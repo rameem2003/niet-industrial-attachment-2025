@@ -45,7 +45,7 @@ const Navber = () => {
             </Link>
           </div>
           <div className="w-2/12 sm:w-3/12 flex justify-end gap-5">
-            <Link to={null}>
+            <Link to="/login">
               <HiOutlineUser className="text-black text-[25px]" />
             </Link>
             <Link to={null}>
