@@ -34,8 +34,8 @@ const Navber = () => {
             <Link to="/" className=" text-base text-black font-medium">
               Home
             </Link>
-            <Link to="/about" className=" text-base text-black font-medium">
-              About
+            <Link to="/shop" className=" text-base text-black font-medium">
+              Shop
             </Link>
             <Link to="/" className=" text-base text-black font-medium">
               Discovery

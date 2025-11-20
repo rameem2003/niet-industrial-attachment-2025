@@ -8,6 +8,7 @@ const ProductList = () => {
   const fetchProducts = async () => {
     try {
       let res = await axios.get("http://localhost:5000/api/product/all");
+      console.log(res.data.data);
       setProducts(res.data.data);
     } catch (error) {
       console.log(error);
@@ -30,7 +31,7 @@ const ProductList = () => {
 
         <div className="mt-5">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {products.map((product, i) => (
+            {products.slice(0, 8).map((product, i) => (
               <ProductCard key={i} product={product} />
             ))}
           </div>

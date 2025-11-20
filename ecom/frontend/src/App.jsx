@@ -6,6 +6,7 @@ import Error from "./pages/Error";
 import RootLayout from "./layout/RootLayout";
 import Login from "./pages/Login";
 import ProductDetails from "./pages/ProductDetails";
+import Shop from "./pages/Shop";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route path="/" element={<RootLayout />}>
             <Route index element={<Home />} />
             <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/shop" element={<Shop />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<Error />} />
