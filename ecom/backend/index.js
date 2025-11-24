@@ -12,6 +12,7 @@ let port = process.env.PORT;
 app.use(
   cors({
     origin: ["http://127.0.0.1:5502", "http://localhost:5173"],
+    credentials: true,
   })
 );
 app.use(cookieParser());

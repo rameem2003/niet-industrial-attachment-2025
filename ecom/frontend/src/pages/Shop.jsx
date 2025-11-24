@@ -3,10 +3,12 @@ import Container from "../components/common/Container";
 import axios from "axios";
 import ProductCard from "../components/common/ProductCard";
 import FilterComponent from "../components/screens/shop/FilterComponent";
+import PriceFilter from "../components/screens/shop/PriceFilter";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [filter, setFilter] = useState([]);
+  const [value, setValue] = useState(0);
   const fetchProducts = async () => {
     try {
       let res = await axios.get("http://localhost:5000/api/product/all");
@@ -22,9 +24,23 @@ const Shop = () => {
     let filteredProducts = products.filter(
       (product) => product.category._id == cat
     );
+    if (value) {
+      let filterbyrange = products.filter(
+        (product) => product.sellingPrice <= value
+      );
+      setFilter(filterbyrange);
+      return;
+    }
+
     console.log(filteredProducts);
     setFilter(filteredProducts);
   };
+
+  console.log(value);
+
+  useEffect(() => {
+    handleFilter();
+  }, [value]);
 
   useEffect(() => {
     fetchProducts();
@@ -35,6 +51,7 @@ const Shop = () => {
         <div className=" flex items-start justify-between gap-5">
           <div className="w-3/12">
             <FilterComponent handleFilter={handleFilter} />
+            <PriceFilter setValue={setValue} value={value} />
           </div>
           <div className="w-9/12">
             <div className="mt-5">

@@ -1,29 +1,71 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import logo from "../assets/logo.png";
+import axios from "axios";
+import { useNavigate } from "react-router";
+import { Bounce, toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { loginReducer } from "../redux/slices/authSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-
-  const login = (data) => {
-    console.log("login successfull");
+  const login = async (data) => {
     console.log(data);
-  };
 
-  const handleClick = () => {
-    // e.preventDefault();
-    handleSubmit(login);
+    try {
+      let res = await axios.post(
+        `${import.meta.env.VITE_API}/auth/login`,
+        data,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      toast.success("Login success", {
+        position: "bottom-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+
+      dispatch(loginReducer(res.data.data));
+
+      navigate("/");
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+      toast.error("Invalid Credential", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+    }
   };
 
   return (
     <main className=" w-full py-10 h-screen flex items-center justify-center">
       <form
         // onSubmit={}
-        onSubmit={handleSubmit((data) => console.log(data))}
+        onSubmit={handleSubmit(login)}
         // onSubmit={handleClick}
         action=""
         className=" p-3 shadow-lg bg-gray-100 w-[500px] max-w-[500px] rounded-md"

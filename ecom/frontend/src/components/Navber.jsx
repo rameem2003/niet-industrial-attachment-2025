@@ -7,9 +7,31 @@ import { BsCart3 } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
 
 import Container from "./common/Container";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { logoutReducer } from "../redux/slices/authSlice";
 
 const Navber = () => {
+  const dispatch = useDispatch();
+  let logginUser = useSelector((state) => state.auth.user);
   const [isOpen, setIsOpen] = useState(false);
+
+  const logout = async () => {
+    dispatch(logoutReducer());
+    let res = await axios.post(
+      `${import.meta.env.VITE_API}/auth/logout`,
+      {},
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log(res);
+  };
+
   return (
     <nav className="bg-white ">
       <Container>
@@ -45,9 +67,29 @@ const Navber = () => {
             </Link>
           </div>
           <div className="w-2/12 sm:w-3/12 flex justify-end gap-5">
-            <Link to="/login">
-              <HiOutlineUser className="text-black text-[25px]" />
-            </Link>
+            {logginUser ? (
+              <div className=" group relative">
+                <img
+                  className="w-[30px] h-[30px] rounded-full"
+                  src={logginUser.image}
+                  alt={logginUser.name}
+                />
+
+                <ul className=" bg-white z-[1000] group-hover:block absolute top-[40px] left-0 hidden">
+                  <li>
+                    <Link className="text-black text-xl p-4">Profile</Link>
+                  </li>
+                  <li onClick={logout} className=" text-red-500 text-xl p-4">
+                    Logout
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <Link to="/login">
+                <HiOutlineUser className="text-black text-[25px]" />
+              </Link>
+            )}
+
             <Link to={null}>
               <BsCart3 className="text-black text-[25px]" />
             </Link>
