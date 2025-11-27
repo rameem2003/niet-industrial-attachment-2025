@@ -1,12 +1,17 @@
 import { useForm } from "react-hook-form";
 import logo from "../assets/logo.png";
 import axios from "axios";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Bounce, toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { loginReducer } from "../redux/slices/authSlice";
+import Cookies from "js-cookie";
+import { useEffect } from "react";
 
 const Login = () => {
+  const token = Cookies.get("token");
+  console.log(token);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -61,6 +66,12 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token]);
+
   return (
     <main className=" w-full py-10 h-screen flex items-center justify-center">
       <form
@@ -113,6 +124,12 @@ const Login = () => {
         >
           Login
         </button>
+
+        <div className=" mt-5">
+          <p className=" text-green-600 font-semibold text-center">
+            <Link to="/register">Create a new account</Link>
+          </p>
+        </div>
       </form>
     </main>
   );

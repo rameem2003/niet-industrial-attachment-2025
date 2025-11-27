@@ -7,7 +7,18 @@ const mail = require("../utils/email");
 
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
+
   try {
+    let existEmail = await userModel.findOne({ email });
+    console.log(existEmail);
+
+    if (existEmail) {
+      return res.status(401).send({
+        success: false,
+        message: "Email already Exist",
+      });
+    }
+
     bcrypt.hash(password, 10, async function (err, hash) {
       // Store hash in your password DB
       if (err) {

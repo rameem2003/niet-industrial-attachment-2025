@@ -7,6 +7,7 @@ import RootLayout from "./layout/RootLayout";
 import Login from "./pages/Login";
 import ProductDetails from "./pages/ProductDetails";
 import Shop from "./pages/Shop";
+import Registration from "./pages/Registration";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
             <Route path="/shop" element={<Shop />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Registration />} />
             <Route path="*" element={<Error />} />
           </Route>
         </Routes>
