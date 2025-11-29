@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { loginReducer } from "../redux/slices/authSlice";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
+import { fetchCartItem } from "../redux/slices/cartSlice";
 
 const Login = () => {
   const token = Cookies.get("token");
@@ -19,6 +20,23 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const fetchCart = async () => {
+    try {
+      let res = await axios.get(`${import.meta.env.VITE_API}/cart/items`, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(res);
+
+      dispatch(fetchCartItem(res.data.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const login = async (data) => {
     console.log(data);
 
@@ -34,6 +52,7 @@ const Login = () => {
         }
       );
 
+      await fetchCart();
       toast.success("Login success", {
         position: "bottom-left",
         autoClose: 5000,

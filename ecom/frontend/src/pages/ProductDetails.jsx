@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Container from "../components/common/Container";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import axios from "axios";
+import Cookies from "js-cookie";
+import { Bounce, toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { fetchCartItem } from "../redux/slices/cartSlice";
 
 const ProductDetails = () => {
+  const dispatch = useDispatch();
+  const token = Cookies.get("token");
+  const navigate = useNavigate();
   let { id } = useParams();
   const [product, setProduct] = useState({});
 
@@ -19,6 +26,74 @@ const ProductDetails = () => {
   };
 
   console.log(product);
+
+  const fetchCart = async () => {
+    try {
+      let res = await axios.get(`${import.meta.env.VITE_API}/cart/items`, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(res);
+
+      dispatch(fetchCartItem(res.data.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addTocart = async (id) => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      let res = await axios.post(
+        `${import.meta.env.VITE_API}/cart/add/${id}`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (res.data.success) {
+        await fetchCart();
+        toast.success(res.data.message, {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      } else {
+        toast.error(res.data.message, {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      }
+
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     fetchSingleProduct();
@@ -124,6 +199,7 @@ const ProductDetails = () => {
                       Add to wishlist
                     </button>
                     <button
+                      onClick={() => addTocart(id)}
                       type="button"
                       className="px-4 py-3 w-[45%] cursor-pointer border border-blue-600 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium"
                     >

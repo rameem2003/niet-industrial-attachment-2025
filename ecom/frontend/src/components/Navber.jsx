@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 import { RiMenu2Fill } from "react-icons/ri";
 import { Link } from "react-router";
@@ -10,11 +10,30 @@ import Container from "./common/Container";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { logoutReducer } from "../redux/slices/authSlice";
+import { fetchCartItem } from "../redux/slices/cartSlice";
 
 const Navber = () => {
+  const cart = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
   let logginUser = useSelector((state) => state.auth.user);
   const [isOpen, setIsOpen] = useState(false);
+
+  const fetchCart = async () => {
+    try {
+      let res = await axios.get(`${import.meta.env.VITE_API}/cart/items`, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(res);
+
+      dispatch(fetchCartItem(res.data.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const logout = async () => {
     dispatch(logoutReducer());
@@ -31,6 +50,10 @@ const Navber = () => {
 
     console.log(res);
   };
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
 
   return (
     <nav className="bg-white ">
@@ -90,7 +113,10 @@ const Navber = () => {
               </Link>
             )}
 
-            <Link to={null}>
+            <Link className=" relative" to="/cart">
+              <span className=" absolute top-[-6px] right-[-6px] flex items-center justify-center h-4 w-4 bg-green-500 rounded-full text-white">
+                {cart.length ? cart.length : 0}
+              </span>
               <BsCart3 className="text-black text-[25px]" />
             </Link>
           </div>
