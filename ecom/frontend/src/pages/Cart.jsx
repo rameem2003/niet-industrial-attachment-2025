@@ -1,9 +1,12 @@
 import React from "react";
 import Container from "../components/common/Container";
 import { useSelector } from "react-redux";
-
+import useCart from "../hooks/useCart";
+import { MdErrorOutline } from "react-icons/md";
+import useAuth from "../hooks/useAuth";
 const Cart = () => {
-  const cart = useSelector((state) => state.cart.cart);
+  const { user } = useAuth();
+  const { cart, addTocart, decrementCartItem, removeCartItem } = useCart();
   console.log(cart);
 
   return (
@@ -15,7 +18,15 @@ const Cart = () => {
           </h1>
           <div className="grid lg:grid-cols-3 lg:gap-x-8 gap-x-6 gap-y-8 mt-6">
             <div className="lg:col-span-2 space-y-6">
-              {cart?.map((product, i) => (
+              {cart?.data?.length == 0 && (
+                <div className="p-3 flex items-center gap-3 dark:bg-red-600/40 bg-[#fdeded] rounded">
+                  <MdErrorOutline className="text-[#d74242] text-[1.5rem] dark:text-red-500" />
+                  <p className="text-[#d74242] text-[1rem] dark:text-red-500">
+                    No Cart Item Found
+                  </p>
+                </div>
+              )}
+              {cart?.data?.map((product, i) => (
                 <div className=" flex gap-4 bg-white px-4 py-6 rounded-md shadow-sm border border-gray-200">
                   <div className=" flex gap-6 sm:gap-4 max-sm:flex-col">
                     <div className="w-24 h-24 max-sm:w-24 max-sm:h-24 shrink-0">
@@ -42,7 +53,7 @@ const Cart = () => {
                     </div>
                   </div>
                   <div className="ml-auto flex flex-col">
-                    <div className="flex items-start gap-4 justify-end">
+                    <div className="flex items-center gap-4 justify-end">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="w-4 h-4 cursor-pointer fill-slate-400 hover:fill-pink-600 inline-block"
@@ -53,23 +64,29 @@ const Cart = () => {
                           data-original="#000000"
                         />
                       </svg>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4 cursor-pointer fill-slate-400 hover:fill-red-600 inline-block"
-                        viewBox="0 0 24 24"
+                      <button
+                        onClick={() => removeCartItem(product?._id)}
+                        type="button"
                       >
-                        <path
-                          d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z"
-                          data-original="#000000"
-                        />
-                        <path
-                          d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z"
-                          data-original="#000000"
-                        />
-                      </svg>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-4 h-4 cursor-pointer fill-slate-400 hover:fill-red-600 inline-block"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z"
+                            data-original="#000000"
+                          />
+                          <path
+                            d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z"
+                            data-original="#000000"
+                          />
+                        </svg>
+                      </button>
                     </div>
                     <div className="flex items-center gap-3 mt-auto">
                       <button
+                        onClick={() => decrementCartItem(product?.item?._id)}
                         type="button"
                         className="flex items-center justify-center w-[18px] h-[18px] cursor-pointer bg-slate-400 outline-none rounded-full"
                       >
@@ -85,9 +102,10 @@ const Cart = () => {
                         </svg>
                       </button>
                       <span className="font-semibold text-base leading-[18px]">
-                        2
+                        {product?.quantity}
                       </span>
                       <button
+                        onClick={() => addTocart(product?.item?._id)}
                         type="button"
                         className="flex items-center justify-center w-[18px] h-[18px] cursor-pointer bg-slate-800 outline-none rounded-full"
                       >
@@ -129,7 +147,7 @@ const Cart = () => {
                 </li>
                 <hr className="border-slate-300" />
                 <li className="flex flex-wrap gap-4 text-sm font-semibold text-slate-900">
-                  Total <span className="ml-auto">$206.00</span>
+                  Total <span className="ml-auto">$ {cart?.grandTotal}</span>
                 </li>
               </ul>
               <div className="mt-8 space-y-4">

@@ -78,6 +78,42 @@ const addToCart = async (req, res) => {
   }
 };
 
+const decrementCartItem = async (req, res) => {
+  if (!req.user) {
+    return res
+      .status(404)
+      .send({ success: false, message: "Unathorised User" });
+  }
+
+  let { item } = req.params;
+
+  try {
+    let existCart = await cartModel.findOne({ userId: req.user.id, item });
+
+    if (!existCart) {
+      return res.status(404).send({
+        success: false,
+        message: "Item not found in Cart",
+      });
+    } else {
+      existCart.quantity--;
+      await existCart.save();
+
+      return res.status(200).send({
+        success: true,
+        message: "Item quantity decrement to Cart",
+        data: existCart,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const removeItem = async (req, res) => {
   if (!req.user) {
     return res
@@ -103,4 +139,4 @@ const removeItem = async (req, res) => {
   }
 };
 
-module.exports = { viewCart, addToCart, removeItem };
+module.exports = { viewCart, addToCart, decrementCartItem, removeItem };
