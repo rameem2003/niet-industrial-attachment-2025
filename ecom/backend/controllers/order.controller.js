@@ -100,6 +100,8 @@ const createNewOrder = async (req, res) => {
   };
 
   sslcz.init(data).then((apiResponse) => {
+    console.log(apiResponse);
+
     // Redirect the user to payment gateway
     let GatewayPageURL = apiResponse.GatewayPageURL;
     // res.redirect(GatewayPageURL);

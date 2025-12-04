@@ -4,10 +4,44 @@ import { useSelector } from "react-redux";
 import useCart from "../hooks/useCart";
 import { MdErrorOutline } from "react-icons/md";
 import useAuth from "../hooks/useAuth";
+import axios from "axios";
+import { useState } from "react";
 const Cart = () => {
+  const [address, setAddress] = useState("");
+  const [error, setError] = useState("");
   const { user } = useAuth();
   const { cart, addTocart, decrementCartItem, removeCartItem } = useCart();
   console.log(cart);
+
+  const handleCheckout = async () => {
+    if (!address) {
+      setError("Shipping Address Must be Provided");
+      return;
+    }
+    console.log(address);
+
+    try {
+      let res = await axios.post(
+        `${import.meta.env.VITE_API}/order/create`,
+        {
+          address,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (res.data.GatewayPageURL) {
+        window.location.href = res.data.GatewayPageURL;
+      }
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <section>
@@ -126,6 +160,29 @@ const Cart = () => {
               ))}
             </div>
             <div className="bg-white rounded-md px-4 py-6 h-max shadow-sm border border-gray-200">
+              <div className="w-full mb-2">
+                <label
+                  htmlFor="name"
+                  className="text-[15px] dark:text-slate-300 text-[#424242] font-[400]"
+                >
+                  Address <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                  }}
+                  placeholder="Enter your address...."
+                  className="border-[#e5eaf2] dark:bg-transparent dark:border-slate-600 dark:placeholder:text-slate-600 dark:text-slate-300 border rounded-md outline-none px-4 w-full mt-1 py-3 focus:border-[#3B9DF8] transition-colors duration-300"
+                />
+                {error && (
+                  <span className=" text-red-500 font-semibold inline-block mt-2">
+                    {error}
+                  </span>
+                )}
+              </div>
               <ul className="text-slate-500 font-medium space-y-4">
                 <li className="flex flex-wrap gap-4 text-sm">
                   Subtotal{" "}
@@ -152,6 +209,7 @@ const Cart = () => {
               </ul>
               <div className="mt-8 space-y-4">
                 <button
+                  onClick={handleCheckout}
                   type="button"
                   className="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-slate-800 hover:bg-slate-900 text-white rounded-md cursor-pointer"
                 >
