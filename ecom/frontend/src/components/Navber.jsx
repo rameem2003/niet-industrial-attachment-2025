@@ -1,23 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import logo from "../assets/logo.png";
-import { RiMenu2Fill } from "react-icons/ri";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { HiOutlineUser } from "react-icons/hi2";
 import { BsCart3 } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
 
 import Container from "./common/Container";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import { logoutReducer } from "../redux/slices/authSlice";
-import { fetchCartItem } from "../redux/slices/cartSlice";
 import useCart from "../hooks/useCart";
+import useAuth from "../hooks/useAuth";
 
 const Navber = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { cart } = useCart();
   const dispatch = useDispatch();
-  let logginUser = useSelector((state) => state.auth.user);
   const [isOpen, setIsOpen] = useState(false);
+
+  // console.log(logginUser);
 
   const logout = async () => {
     dispatch(logoutReducer());
@@ -32,6 +34,7 @@ const Navber = () => {
       }
     );
 
+    navigate("/");
     console.log(res);
   };
 
@@ -70,17 +73,19 @@ const Navber = () => {
             </Link>
           </div>
           <div className="w-2/12 sm:w-3/12 flex justify-end gap-5">
-            {logginUser ? (
+            {user ? (
               <div className=" group relative">
                 <img
                   className="w-[30px] h-[30px] rounded-full"
-                  src={logginUser.image}
-                  alt={logginUser.name}
+                  src={user?.data?.image}
+                  alt={user?.data?.name}
                 />
 
                 <ul className=" bg-white z-[1000] group-hover:block absolute top-[40px] left-0 hidden">
                   <li>
-                    <Link className="text-black text-xl p-4">Profile</Link>
+                    <Link to="/profile" className="text-black text-xl p-4">
+                      Profile
+                    </Link>
                   </li>
                   <li onClick={logout} className=" text-red-500 text-xl p-4">
                     Logout

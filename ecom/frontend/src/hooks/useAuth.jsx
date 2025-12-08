@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginReducer } from "../redux/slices/authSlice";
+import { toast } from "react-toastify";
 
 const useAuth = () => {
   const user = useSelector((state) => state.auth.user);
@@ -21,11 +22,40 @@ const useAuth = () => {
     }
   };
 
+  const userProfileUpdate = async (data) => {
+    let form = new FormData();
+    form.append("name", data.name);
+    form.append("phone", data.phone);
+    form.append("email", data.email);
+    form.append("address", data.address);
+    try {
+      let res = await axios.patch(
+        `${import.meta.env.VITE_API}/auth/profile-update`,
+        form,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // console.log(res);
+      if (res.data.success) {
+        toast.success(res.data.message);
+      }
+
+      await userFetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     userFetch();
   }, []);
 
-  return { user, userFetch };
+  return { user, userFetch, userProfileUpdate };
 };
 
 export default useAuth;

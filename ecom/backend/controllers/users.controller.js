@@ -147,11 +147,11 @@ const loginUser = async (req, res) => {
           };
 
           let token = jwt.sign(userData, process.env.JWT_KEY, {
-            expiresIn: "10m",
+            expiresIn: "50m",
           });
 
           res.cookie("token", token, {
-            maxAge: 60000 * 10, // 10 min
+            maxAge: 60000 * 50, // 50 min
           });
 
           res.status(200).send({
