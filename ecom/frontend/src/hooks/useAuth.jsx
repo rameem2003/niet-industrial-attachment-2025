@@ -16,6 +16,8 @@ const useAuth = () => {
           "Content-Type": "application/json",
         },
       });
+      console.log(res);
+
       dispatch(loginReducer(res.data));
     } catch (error) {
       console.log(error);
@@ -51,11 +53,77 @@ const useAuth = () => {
     }
   };
 
+  const userPasswordUpdate = async (data) => {
+    try {
+      let res = await axios.post(
+        `${import.meta.env.VITE_API}/auth/update-password`,
+        data,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log(res);
+
+      // console.log(res);
+      if (res.data.success) {
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.response.data.message);
+      }
+
+      await userFetch();
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const resendEmailVerification = async () => {
+    console.log(user);
+
+    try {
+      let res = await axios.post(
+        `${import.meta.env.VITE_API}/auth/resend`,
+        { email: user.data.email },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log(res);
+
+      // console.log(res);
+      if (res.data.success) {
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.response.data.message);
+      }
+
+      await userFetch();
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
+  };
+
   useEffect(() => {
     userFetch();
   }, []);
 
-  return { user, userFetch, userProfileUpdate };
+  return {
+    user,
+    userFetch,
+    userProfileUpdate,
+    userPasswordUpdate,
+    resendEmailVerification,
+  };
 };
 
 export default useAuth;

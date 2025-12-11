@@ -4,6 +4,7 @@ import Container from "../components/common/Container";
 import { Link, useNavigate } from "react-router";
 import UserForm from "../components/screens/profile/UserForm";
 import OrdersList from "../components/screens/profile/OrdersList";
+import UpdatePassword from "../components/screens/profile/UpdatePassword";
 
 const Profile = () => {
   const [page, setPage] = useState(0);
@@ -26,7 +27,10 @@ const Profile = () => {
                 <button onClick={() => setPage(0)}>Profile</button>
               </li>
               <li className=" mb-5">
-                <button onClick={() => setPage(1)}>Order</button>
+                <button onClick={() => setPage(1)}>Update Password</button>
+              </li>
+              <li className=" mb-5">
+                <button onClick={() => setPage(2)}>Order</button>
               </li>
               <li className=" mb-5">
                 <button>Logout</button>
@@ -35,7 +39,8 @@ const Profile = () => {
           </aside>
 
           {page == 0 && <UserForm />}
-          {page == 1 && <OrdersList />}
+          {page == 1 && <UpdatePassword />}
+          {page == 2 && <OrdersList />}
         </section>
       </Container>
     </main>

@@ -327,10 +327,17 @@ const updateUserPassword = async (req, res) => {
       });
     } else {
       bcrypt.compare(oldPassword, existUser.password, (err, data) => {
+        console.log(data);
+        // return;
         if (err) {
           return res.status(401).send({
             success: false,
             message: "Unauthorized User",
+          });
+        } else if (data == false) {
+          return res.status(404).send({
+            success: false,
+            message: "Password Didn't Matched",
           });
         } else {
           if (newPassword == confirmNewPassword) {
