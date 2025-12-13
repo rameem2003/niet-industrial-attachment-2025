@@ -53,6 +53,33 @@ const useAuth = () => {
     }
   };
 
+  const userProfileImageUpdate = async (file) => {
+    let form = new FormData();
+    form.append("image", file);
+
+    try {
+      let res = await axios.patch(
+        `${import.meta.env.VITE_API}/auth/profile-update`,
+        form,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // console.log(res);
+      if (res.data.success) {
+        toast.success(res.data.message);
+      }
+
+      await userFetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const userPasswordUpdate = async (data) => {
     try {
       let res = await axios.post(
@@ -123,6 +150,7 @@ const useAuth = () => {
     userProfileUpdate,
     userPasswordUpdate,
     resendEmailVerification,
+    userProfileImageUpdate,
   };
 };
 

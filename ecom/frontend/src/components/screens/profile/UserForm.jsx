@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import useAuth from "../../../hooks/useAuth";
+import InputProfileImage from "./InputProfileImage";
+import ProfleImageComponent from "./ProfleImageComponent";
 
 const UserForm = () => {
   const { user, userProfileUpdate, resendEmailVerification } = useAuth();
   let logginUser = useSelector((state) => state.auth.user);
   console.log(user);
+  const [image, setImage] = useState(null);
 
   const {
     register,
@@ -25,17 +28,28 @@ const UserForm = () => {
     await userProfileUpdate(data);
   };
 
+  useEffect(() => {
+    setImage(user?.data?.image);
+  }, []);
+
   return (
     <section className="w-9/12 p-4   rounded-md min-h-screen">
       <h2 className=" text-3xl text-black font-bold">Profile</h2>
 
-      {!user.data.isVerify && (
+      {!user?.data?.isVerify && (
         <button
           onClick={resendEmailVerification}
           className=" mt-5 px-4 py-3 bg-green-500 text-white rounded-md cursor-pointer"
         >
           Verify Your Account
         </button>
+      )}
+      {image ? (
+        <ProfleImageComponent onDelete={setImage} data={image} />
+      ) : (
+        <>
+          <InputProfileImage /> <hr />
+        </>
       )}
 
       <form action="" onSubmit={handleSubmit(updateUser)}>
