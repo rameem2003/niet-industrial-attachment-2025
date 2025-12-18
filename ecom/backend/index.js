@@ -11,7 +11,11 @@ let port = process.env.PORT;
 
 app.use(
   cors({
-    origin: ["http://127.0.0.1:5502", "http://localhost:5173"],
+    origin: [
+      "http://127.0.0.1:5502",
+      "http://localhost:5173",
+      "https://niet-industrial-attachment-2025.onrender.com",
+    ],
     credentials: true,
   })
 );
