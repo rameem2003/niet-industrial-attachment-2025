@@ -11,7 +11,7 @@ const Shop = () => {
   const [value, setValue] = useState(0);
   const fetchProducts = async () => {
     try {
-      let res = await axios.get("http://localhost:5000/api/product/all");
+      let res = await axios.get(import.meta.env.VITE_API + "/product/all");
       console.log(res.data.data);
       setProducts(res.data.data);
       setFilter(res.data.data);
